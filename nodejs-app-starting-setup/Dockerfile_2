@@ -1,0 +1,25 @@
+#base image, this image exists on docker hub
+FROM node
+
+# setting working directory to run further command
+WORKDIR /app
+
+# say you are changing only server.js
+# if there is any new package installed then running npm install is needed
+# just changing server.js , won't need
+# now to have better caching of image layers, we should
+
+COPY package.json /app
+RUN npm install
+
+
+# while rebuilding image this will ensure that all above things is cached
+# and instructions here after are only re-evaluated
+COPY . /app
+
+
+EXPOSE 80
+CMD ["node","server.js"]
+
+# docker build -t cbagade/cl-node-app:v1 .
+# build again by changing server.js, and check caching used till what
