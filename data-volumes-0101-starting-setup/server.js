@@ -11,6 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static("public"));
 app.use("/feedback", express.static("feedback"));
+app.use("/bindvoldir", express.static("bindvoldir"));
 
 app.get("/", (req, res) => {
   const filePath = path.join(__dirname, "pages", "feedback.html");
@@ -30,13 +31,17 @@ app.post("/create", async (req, res) => {
 
   const tempFilePath = path.join(__dirname, "temp", adjTitle + ".txt");
   const finalFilePath = path.join(__dirname, "feedback", adjTitle + ".txt");
-  console.log(`tempFilePath ${tempFilePath} and content is ${content}`);
+  const dirBindVolPath = path.join(__dirname, "bindvoldir", adjTitle + ".txt");
+  console.log(
+    `tempFilePath ${tempFilePath} and content is ${content} and ${dirBindVolPath} `
+  );
   await fs.writeFile(tempFilePath, content);
   exists(finalFilePath, async (exists) => {
     if (exists) {
       res.redirect("/exists");
     } else {
       await fs.copyFile(tempFilePath, finalFilePath);
+      await fs.copyFile(tempFilePath, dirBindVolPath);
       await fs.unlink(tempFilePath);
       res.redirect("/");
     }

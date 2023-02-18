@@ -1,0 +1,46 @@
+#base image, this image exists on docker hub
+FROM node
+
+# setting working directory to run further command
+WORKDIR /app
+
+# say you are changing only server.js
+# if there is any new package installed then running npm install is needed
+# just changing server.js , won't need
+# now to have better caching of image layers, we should
+
+COPY package.json /app
+RUN npm install
+
+
+# while rebuilding image this will ensure that all above things is cached
+# and instructions here after are only re-evaluated
+COPY . /app
+
+
+EXPOSE 80
+
+
+# no need for VOLUME when we want to create named volume 
+# the docker run command will change for named volume
+# VOLUME [ "/app/feedback" ]
+
+CMD ["node","server.js"]
+
+# docker build -t cbagade/cl-data-vol:v3 .
+# docker push cbagade/cl-data-vol:v3
+# 
+
+# remove volume
+# docker volume rm feedback
+# the second volume is bind volume, which is mapped to path on host
+# ensure the path on locahost don't have any file
+# docker run -d -p 3000:80 --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0101-starting-setup/feedback:/app/bindvoldir"  --rm cbagade/cl-data-vol:v3
+# http://localhost:3000/
+# fill form with title chandra
+# http://localhost:3000/bindvoldir/chandra.txt
+# also verify on host , file is available in feedback directory
+# try to change content sudo vi chandra.txt
+# changed content will be reflected at
+# http://localhost:3000/bindvoldir/chandra.txt
+
