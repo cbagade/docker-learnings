@@ -39,3 +39,16 @@ CMD ["node", "app.js"]
 #    "url":"http://anything"
 #}
 # GET - http://localhost:3000/favorites
+
+
+# without hardcoding IP Address
+# docker stop network-app
+# docker stop mongodb
+# docker rm mongodb
+# docker network create demo-net
+# docker network ls
+# docker run -d --name mongodb --network demo-net mongo
+# app_3.js will have now name of mongo container instead of IP Address
+# docker build -t cbagade/cl-networking:v3 .
+# docker run -p 3000:3000 -d --name network-app --network demo-net --rm cbagade/cl-networking:v3
+# hit again GET and POST /favorites requests as shown
