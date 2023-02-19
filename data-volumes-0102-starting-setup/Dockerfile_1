@@ -1,0 +1,53 @@
+#base image, this image exists on docker hub
+FROM node
+
+# setting working directory to run further command
+WORKDIR /app
+
+# say you are changing only server.js
+# if there is any new package installed then running npm install is needed
+# just changing server.js , won't need
+# now to have better caching of image layers, we should
+
+COPY package.json /app
+RUN npm install
+
+
+# while rebuilding image this will ensure that all above things is cached
+# and instructions here after are only re-evaluated
+COPY . /app
+
+# the server.js is changed to app.listen(process.env.PORT);
+# 80 is default value
+ENV PORT 80
+
+# can be replaced with env var
+EXPOSE $PORT
+
+
+# no need for VOLUME when we want to create named volume 
+# the docker run command will change for named volume
+# VOLUME [ "/app/feedback" ]
+
+CMD ["node","server.js"]
+
+# docker build -t cbagade/cl-data-vol:v5 .
+# docker push cbagade/cl-data-vol:v5
+# 
+
+# remove volume
+# docker volume rm feedback 
+# also delete filed from local host in feedback folder and temp folder
+# docker run -d -p 3000:80 --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0102-starting-setup/feedback:/app/bindvoldir"  --rm cbagade/cl-data-vol:v5
+# http://localhost:3000/
+# fill form with title chandra
+# http://localhost:3000/bindvoldir/chandra.txt
+# now stop docker and run command as supplying port as 8000 and mapping host port 3000 to 8000
+# no need to rebuild image
+# docker run -d -p 3000:8000 --env PORT=8000 --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0102-starting-setup/feedback:/app/bindvoldir"  --rm cbagade/cl-data-vol:v5
+# things work as it is , suggesting env is working fine
+# another short form of env is e
+# docker run -d -p 3000:8000 --e PORT=8000 --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0102-starting-setup/feedback:/app/bindvoldir"  --rm cbagade/cl-data-vol:v5
+# another way is to create env file , in this case .env
+# docker run -d -p 3000:8000 --env-file ./.env --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0102-starting-setup/feedback:/app/bindvoldir"  --rm cbagade/cl-data-vol:v5
+

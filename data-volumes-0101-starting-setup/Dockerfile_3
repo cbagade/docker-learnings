@@ -44,3 +44,19 @@ CMD ["node","server.js"]
 # changed content will be reflected at
 # http://localhost:3000/bindvoldir/chandra.txt
 
+
+
+############### NOT TO DEMO ##################################
+
+# to see how we can make code changes reflected without building
+# try, this will throw error though   
+# also following is in attached mode to see logs
+# docker volume rm feedback
+# docker run -p 3000:80 --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0101-starting-setup:/app"  --rm cbagade/cl-data-vol:v3
+# reason being, the bind volume will overwrite everything inside /app folder and there won't be any node_modules folder
+# this can be solved anonymous volume (exactly where anonymous volumes are used)
+# /app/node_modules can be mounted on anonymous volume to preserve
+# docker volume rm feedback
+# 3rd -v 
+# docker run -p 3000:80 --name feedback-app -v feedback:/app/feedback -v "/home/chandra/docker-learnings/data-volumes-0101-starting-setup:/app"  -v /app/node_modules --rm cbagade/cl-data-vol:v3
+# 
