@@ -1,0 +1,31 @@
+FROM node
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+ENV MONGODB_USER=chandra
+ENV MONGODB_PASSWORD=chandra
+
+CMD ["node", "app.js"]
+
+# NOT WORKING , NEED TO DEBUG
+
+# Mongo DB Authentication
+# docker stop network-app
+# docker stop mongodb
+# docker rm mongodb
+# run mongo db with named volume
+# docker run -d --name mongodb -e MONGO_INITDB_ROOT_USERNAME=chandra -e MONGO_INITDB_ROOT_PASSWORD=chandra -v data:/data/db --rm --network demo-net mongo
+# docker run -p 3000:3000 -d --name network-app --network demo-net --rm cbagade/cl-networking:v3
+# hit again GET and do docker logs -f network-app
+# it complains about authentication
+# see the changes in app_4.js and this Dockerfile to have env variables
+# docker build -t cbagade/cl-networking:v4 .
+# docker run -p 3000:3000 -d --name network-app --network demo-net --rm cbagade/cl-networking:v4
+# Somehow this is not working , need to debug
+

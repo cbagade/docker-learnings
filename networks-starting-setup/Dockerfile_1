@@ -41,7 +41,7 @@ CMD ["node", "app.js"]
 # GET - http://localhost:3000/favorites
 
 
-# without hardcoding IP Address
+# Without hardcoding IP Address
 # docker stop network-app
 # docker stop mongodb
 # docker rm mongodb
@@ -52,3 +52,18 @@ CMD ["node", "app.js"]
 # docker build -t cbagade/cl-networking:v3 .
 # docker run -p 3000:3000 -d --name network-app --network demo-net --rm cbagade/cl-networking:v3
 # hit again GET and POST /favorites requests as shown
+
+
+# Persisting Data
+# docker stop network-app
+# docker stop mongodb
+# docker rm mongodb
+# run mongo db with named volume
+# docker run -d --name mongodb -v data:/data/db --rm --network demo-net mongo
+# docker run -p 3000:3000 -d --name network-app --network demo-net --rm cbagade/cl-networking:v3
+# hit again GET and POST /favorites requests as shown
+# stop and remove mongo db container and restart again
+# docker run -d --name mongodb -v data:/data/db --rm --network demo-net mongo
+# now GET request will show previous data, hence proved , data is persisted
+
+
