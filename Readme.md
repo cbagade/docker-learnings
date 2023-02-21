@@ -330,3 +330,44 @@ app_4.js
 
 ------------ NOT WORKING , NEED TO DEBUG ENDS ---------------------- 
 
+
+## docker compose
+
+* till now , we created pods , we created networks and we run pods 
+* the commands were having volumes, environment variables, publish ports
+* while stopping, we need to stop containers, remove volumes and other work
+* Imagine your application got more containers
+* all these are discrete set of commands
+
+* docker-compose is a tool which makes managing multi container setup easier
+
+* tearing down is also easier
+* setting up and tearing down can be done with simple command
+
+* docker-compose helps to replace docker build and docker run command with one configuration file.
+* docker compose does not replaces Dockerfile, Images or Containers
+
+```
+folder compose-02-finished
+```
+
+* explain yaml and syntax
+* No need for network in docker compose , because by default all services in single docker-compose files will be placed on single network
+
+```
+folder compose-02-finished
+docker-compose-mongo.yaml
+```
+
+After that
+
+```
+folder compose-02-finished
+docker-compose-all.yaml
+```
+
+## Utility containers
+
+* nothing official like Utility Containers
+
+* 
