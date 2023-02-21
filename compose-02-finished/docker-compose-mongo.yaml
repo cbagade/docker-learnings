@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  mongodb:
+    image: 'mongo'
+    volumes: 
+      - data:/data/db
+    # environment: 
+    #   MONGO_INITDB_ROOT_USERNAME: chandra
+    #   MONGO_INITDB_ROOT_PASSWORD: chandra
+      # - MONGO_INITDB_ROOT_USERNAME=chandra
+    env_file: 
+      - ./env/mongo.env
+# named volumes need to be listed
+# no need to anonymous and bind volumes
+volumes: 
+  data:
+
+# docker-compose up
+# will pull mongo image and will start container
+# in detached mode
+# docker-compose up -d
+# remove everything except volume
+# docker compose down
+# remove everything including volume
+#  docker compose down -v
