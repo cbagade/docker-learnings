@@ -368,6 +368,99 @@ docker-compose-all.yaml
 
 ## Utility containers
 
+* Nothing to Demo
+
 * nothing official like Utility Containers
 
+* Like environment containers , like php or node js, they don't have application inside it
+
+* discuss about docker exec 
+
+* diff bet CMD and ENTRYPOINT
+
+https://devtron.ai/blog/cmd-and-entrypoint-differences/#:~:text=CMD%3A%20Sets%20default%20parameters%20that,Docker%20containers%20with%20CLI%20parameters
+
+## Dev to Prod
+
+* Bind vol shouldn't be use in production
+
+
+# Kubernetes
+
+* Independent container Orchestration , a framwork , a tool , collection of standards, helps large scale deployment independent of cloud providers
+
+* https://kubernetes.io/ , official documentation
+
+* Opensource, for automating, deployment, scaling and management of containerized application
+
+* Without k8
+
+![](without_k8.png)
+
+* Its NOT a cloud service provider
+* Its NOT a service by cloud service provider
+* Its NOT restricted to a specific cloud provider
+* Its NOT software but collection of concept and tools
+* Its NOT replacement to docker, but it works with docker to deploy and manage containers at large scale
+* Its NOT a paid service , but free opensource project (But if you use cloud provider k8 service , you need to pay)
+* Its like Docker-Compose, for multiple machines
+
+
+## Architecture
+
+* In K8 , container is encapsulated in pod. Pod is smalled unit in K8
+* Pod might have multiple containers
+* Pod runs on worker node
+* Worker nodes runs containers, so its like you machines or vms
+* Worker nodes have finite memory, cpus
+* To control network traffic to all the pods, Proxy/Config is deployed on worker node, like how the containers can be reached from outside world
+* Typically you must have 1 worker node, but in real time, you will have more worker nodes with enough computing power
+* K8 is responsible for distributing work load across worker nodes
+* These worker nodes should be control by someone, someone need to deploy start stop shutdown containers on these worker nodes
+* Thats done my Master node, specifically by conteol plane. It is control center
+* Its another machine or remote machine
+* You can have one machine which acts both master and worker node but for bigger deployments these are separate and deployed on multiple machines
+* All together this forms a cluster
+
+![](k8_arch.png)
+
+
+![](worker_node.png)
+
+
+![](master_node.png)
+
+
+## Installation
+
+* done with KinD
+* Can be done with minikube for dev setup
+* Playground is available at - https://www.katacoda.com/ 
+(cbagade@yahoo.com/chand0617)
+* But katacode is closed now
+
+* Alternative is https://killercoda.com/playgrounds/scenario/kubernetes
+* I signed with Gmail
+
+
+## K8 Objects
+
+### Pod
+
+* Pod is smallest unit holding container or containers
+* Contains shared resources (for ex.) volumes for all containers
+* Has cluster internal IP by default
+* If pod has multiple containers, then they can communicate with each other by localhost
+* Pods are ephemeral in nature, nothin is statefull there. K8 will start, stop, replace them as needed. That what k8 is doing for us.
+* IP changes when, pod is restarted
+
+
+### Deployment
+
+* Instead pod, you always create deployment object
+* It will control one or multiple pods
+* We set desired and K8 will ensure to meet that
+* If we mess , then we can rollback
+* Deployment can scale dynamically with autoscaling with metrics
 * 
+
