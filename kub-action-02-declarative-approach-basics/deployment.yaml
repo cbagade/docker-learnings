@@ -1,0 +1,51 @@
+# The deployment object first should have its own name , then the container and pod containing that container
+# and then selecting this pod as a part of deployment
+
+# refer https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
+# will list all details of enclosing specs
+apiVersion: apps/v1
+# Deployment is k8 artifact or k8 object
+kind: Deployment
+metadata:
+  # name of deployment
+  name: second-app-deployment
+# deployment specs, how the deployment should be configured
+spec:
+  # how many pods, default is 1, even 0 can be given
+  replicas: 1
+  # pods specs, which deployment should have
+  template:
+    # pods should be labelled with
+    # there is no need for kind: Pod  here as deployment will always have pod
+    metadata:
+      # pod should be labelled with
+      labels:
+        app: second-app
+        tier: backend
+    # how this pod should look like
+    spec:
+      # how containers should be created inside pods
+      # for this deployment, how many replicas you create , all pods will have same container spec
+      containers:
+        # container name inside pod and image
+        - name: second-node
+          # you need to create this image and push to registry
+          image: cbagade/kub-first-app:v1
+  # what pods should be created as a part of deployment
+  # see template section, where pods are labelled
+  # those pods will be selected to form this deployment
+  selector:
+    # the labels will be matched based on labels of pods
+    matchLabels:
+      app: second-app
+      tier: backend
+# docker build -t cbagade/kub-first-app:v1 .
+# docker push cbagade/kub-first-app:v1
+# kubectl apply -f deployment.yaml
+# kubectl get pods
+# kubectl get deployment
+# kubectl describe deployment second-app-deployment
+# watch out for label of deployment
+# kubectl get pods
+# kubectl describe pod second-app-deployment-58c7dcd748-bcfsw
+# watch out labels of pods

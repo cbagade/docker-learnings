@@ -79,7 +79,11 @@ CMD [ "node", "app.js" ]
 # file cluster-config.yml is checked in
 # kind create cluster --config=cluster-config.yml --name=chandra-learnings
 # kubectl create deployment kube-setup --image=cbagade/kube-setup 
-# kubectl expose --type=NodePort deployment kube-setup --port 8080 --name kube-setup  --overrides '{ "apiVersion": "v1","spec":{"ports": [{"port":8080,"protocol":"TCP","targetPort":8080,"nodePort":30001}]}}'
+# kubectl expose --type=NodePort deployment kube-setup --port 8080 --name kube-setup  --overrides '{ "apiVersion": "v1","spec":{"ports": [{"port":80,"protocol":"TCP","targetPort":8080,"nodePort":30001}]}}'
+# first --port 8080 will be override
+# "port":80 is port exposed by service
+# "targetPort":8080 will be application port
+
 
 # curl http://localhost:30001
 # Rest combinations don't work on kinD cluster
