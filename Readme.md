@@ -462,5 +462,41 @@ https://devtron.ai/blog/cmd-and-entrypoint-differences/#:~:text=CMD%3A%20Sets%20
 * We set desired and K8 will ensure to meet that
 * If we mess , then we can rollback
 * Deployment can scale dynamically with autoscaling with metrics
-* 
 
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-01-starting-setup
+
+Instructions in Dockerfile
+```
+
+### Service
+
+* to reach pod
+* expose pod to other pods in cluster or visitor outside cluster
+* pod got internal IP address, but we can't use it outside cluster and IP will change when pod is replaced (like in scaling situation)
+* kubectl describe pod <pod_name> | grep -i ip
+* try demo , delete pod and when it is recreated, pod got diff IP
+* So we can't use IP
+* Service give pod a IP, which doesn't change
+* It clubs Pod under a name
+* Service can be exposed outside the cluster , so that pod is reachable outside pod
+
+#### Type of Service
+
+* ClusterIP -> reachable only inside cluster
+* NodePort -> Service should be exposed with IP of worker node
+* LoadBalancer -> This should exist in our infra and will generate unique address to access pod. It will distribute load (when it is scaled)
+
+
+* on kinD cluster services don't work as stated
+* cluster need to be created with a cluster-config.yml which defined extraport mappings , which allows traffic to flow inside kindD cluster
+
+```
+kind create cluster --config=cluster-config.yml --name=chandra-learnings
+```
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-01-starting-setup
+
+Instructions in Dockerfile
+```
