@@ -83,3 +83,64 @@ CMD [ "node", "app.js" ]
 
 # curl http://localhost:30001
 # Rest combinations don't work on kinD cluster
+
+# now look at path
+# curl http://localhost:30001/error
+# this will crash with exit
+# on other teminal
+# kubectl get pods -w
+# hit the curl http://localhost:30001/error on first terminal
+# and see pods going from error to running state
+# meanwhile http://localhost:30001/ will also show  curl: (52) Empty reply from server till pod is restarted
+# The pod is restarted due to deployment
+# Deployment does that
+
+# Scaling
+# kubectl scale deployment/kube-setup --replicas=3
+# kubectl get pods -w
+# hit the curl http://localhost:30001/error on one terminal
+# and immediately curl http://localhost:30001 , you still get good response
+# because now traffic is diverted to another good pod due to muleiple replicas
+
+
+# Update deployment
+# cp app.js to app_1.js
+# mv app.js to app_2.js
+# some lines are changed in heading section of app_2.js
+# docker build -t cbagade/kube-setup:v1 .
+# docker push cbagade/kube-setup:v1
+# get the container name
+# kubectl describe deployment kube-setup
+# kubectl set image deployment/kube-setup kube-setup=cbagade/kube-setup:v1
+# at this stage the image will be updated
+# the status of rollout can be viewed with
+# kubectl rollout status deployment/kube-setup
+# wait for container to come in running state
+# curl http://localhost:30001
+
+
+# Rollback deployment
+# lets update with someimage which doesn not exist
+# kubectl get pods -w on other terminal
+# kubectl set image deployment/kube-setup kube-setup=cbagade/kube-setup:v2
+# kubectl rollout status deployment/kube-setup
+# the rollout status command will stuck as one pod will result in ImagePullBackOff
+# the other pods are like simply waiting (might be in running state (false))
+# curl http://localhost:30001 , will still show results
+# kubectl rollout undo deployment/kube-setup
+# kubectl rollout status deployment/kube-setup
+# watch following on other terminal
+# kubectl get pods -w on other terminal
+
+# History of deployment
+# kubectl rollout history deployment/kube-setup
+# details of revision
+# kubectl rollout history deployment/kube-setup --revision=1
+# say going back to revision 1
+# kubectl rollout undo deployment/kube-setup --to-revision=1
+# kubectl rollout status deployment/kube-setup
+# curl http://localhost:30001
+# you will see first version
+
+#  kubectl delete svc kube-setup
+# kubectl delete deployment kube-setup
