@@ -1,5 +1,11 @@
 # Docker
 
+* On WSL if docker is stopped - 
+
+```
+sudo service docker start
+```
+
 * Docker is a container technology, tool for creating and managing containers
 * Container is unit packing code, required libraries and runtime 
 * Always give same results (No chance for code working on my machine)
@@ -454,8 +460,9 @@ https://devtron.ai/blog/cmd-and-entrypoint-differences/#:~:text=CMD%3A%20Sets%20
 * Pods are ephemeral in nature, nothin is statefull there. K8 will start, stop, replace them as needed. That what k8 is doing for us.
 * IP changes when, pod is restarted
 
+### Impervative approach
 
-### Deployment
+#### Deployment
 
 * Instead pod, you always create deployment object
 * It will control one or multiple pods
@@ -469,7 +476,7 @@ https://devtron.ai/blog/cmd-and-entrypoint-differences/#:~:text=CMD%3A%20Sets%20
 Instructions in Dockerfile
 ```
 
-### Service
+#### Service
 
 * to reach pod
 * expose pod to other pods in cluster or visitor outside cluster
@@ -481,7 +488,7 @@ Instructions in Dockerfile
 * It clubs Pod under a name
 * Service can be exposed outside the cluster , so that pod is reachable outside pod
 
-#### Type of Service
+##### Type of Service
 
 * ClusterIP -> reachable only inside cluster
 * NodePort -> Service should be exposed with IP of worker node
@@ -499,4 +506,114 @@ kind create cluster --config=cluster-config.yml --name=chandra-learnings
 \\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-01-starting-setup
 
 Instructions in Dockerfile
+```
+
+
+
+### Declarative approach
+
+* lot of commands to write
+* problem is same like docker commands vs docker compose
+* tough to write commands for larger deployment
+* kubernetes allows us to create resource file, having configuration objects in yaml file
+* this file will have objects (Kind), which k8 understands
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-02-declarative-approach-basics
+
+deployment.yaml and service.yaml got explaination
+```
+
+No commands and hence easy
+
+* Refer for specs
+
+https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
+
+
+* to remove everything
+
+```
+docker system prune -a
+```
+
+
+#### Reapply
+
+* change yaml file and reapply
+* Like changing replicas or image. Easy to make changes
+
+
+```
+gives current namespace
+kubectl config view | grep namespace
+kubectl config view --minify | grep namespace:
+
+create new namespace
+kubectl create namespace prep
+
+
+switch namespace
+kubectl config set-context --current --namespace=prep
+
+```
+
+#### Delete
+
+kubectl delete -f deployment.yaml (or service.yaml)
+
+#### Club related yamls
+
+* can create something like master-deployment.yaml, which clubs related deployment , services
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-02-declarative-approach-basics\master-deployment.yaml
+```
+
+* In this file service definition is on top , which is good practice
+*  It will keep adding pods dynamically to that service
+
+
+
+#### Liveliness probe
+
+```
+file is \\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-02-declarative-approach-basics\deployment_liveness.yaml
+```
+
+* k8 uses liveness probes to know when to restart a container.For example, liveness probes could catch a deadlock, where an application is running, but unable to make progress.Restarting a container in such a state can help to make the application more available despite bugs
+
+#### Image Pull policy 
+
+make diff deployment.yaml while on tutorial, to explain
+```
+file is \\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-02-declarative-approach-basics\deployment_liveness.yaml
+```
+
+## Managing data and volumes with K8
+
+* What about data , when pod hosting this container is removed
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-01-starting-setup\docker-compose.yaml
+```
+
+* how k8 deals with volumes
+
+* k8 need to be configured to mount volume to our containers
+
+* Demo without Volume
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-02-deployment-and-service
+
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-02-deployment-and-service\deployment.yaml
+```
+
+* When pod is restarted data is lost
+
+### emptyDir
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-03-first-volume\deployment.yaml
 ```
