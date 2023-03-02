@@ -1,3 +1,39 @@
+---
+# what service should have - the deployment which it want to expose, the port of pod and  port at which
+# application is running
+# pl refer https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/
+
+apiVersion: v1
+# k8 artifacts
+kind: Service
+# its own name
+metadata:
+  name: backend
+# deployment specs
+spec:
+  # select pods with lable app: second-app (pods may have multiple labels)
+  # the pods in our case is having second label tier: backend
+  # the pods can also be placed say with label tier: another-backend
+  # so selecting just app: second-app is targetting all the tiers in which this app can be placed
+  selector:
+    app: second-app
+  # ports specs
+  ports:
+    # IP protocol
+    - protocol: "TCP"
+      # port that will be exposed by this service
+      port: 80
+      # port number to access on the pods targeted by the service (mapped to application)
+      targetPort: 8080
+      # to allow traffic inside kinD cluster
+      nodePort: 30001
+  # type of service
+  type: NodePort
+
+  # kubectl apply -f service.yaml
+  # curl http://localhost:30001
+
+---
 # The deployment object first should have its own name , then the container and pod containing that container
 # and then selecting this pod as a part of deployment
 

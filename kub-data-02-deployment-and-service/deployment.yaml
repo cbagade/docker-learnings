@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: story
+  template:
+    metadata:
+      labels:
+        app: story
+    spec:
+      containers:
+        - name: story
+          image: cbagade/kub-data-demo
+
+# docker build -t cbagade/kub-data-demo .
+# docker push cbagade/kub-data-demo
+# kubectl apply -f deployment.yaml -f service.yaml
+# wait for pods to be in running state
+# on postman
+# http://localhost:30003/story -> GET
+# http://localhost:30003/story -> POST {"text":"ghost story"}
+# kubectl delete -f deployment.yaml -f service.yaml
+# kubectl apply -f deployment.yaml -f service.yaml
+# now on GET request you won't see data
+# on postman
+# http://localhost:30003/story -> GET

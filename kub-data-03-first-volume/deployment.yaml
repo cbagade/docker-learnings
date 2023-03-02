@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: story
+  template:
+    metadata:
+      labels:
+        app: story
+    spec:
+      containers:
+        - name: story
+          image: cbagade/kub-data-demo:v1
+          # after setting vol at pod, we need to mount that on container on specific path
+          # this application is already have story folder, which will be inside app folder (see Dockerfile)
+          # so that text file will be available onto pod now, over volume
+          volumeMounts:
+            - mountPath: /app/story
+              # name of volume set on pod, there might be multiple volumes, so need names
+              name: story-volume
+      # volumes are at container level on pods
+      volumes:
+        # following volumes can be used by containers then
+        # this should be defined first and then the volumeMounts should be added to containers
+        # 
+        - name: story-volume
+          # will create emptyDir when pod starts and keeps directory alive as long as pod is alive
+          # if container restarts, data survive , but if pods restart, the data is gone
+          emptyDir: {}
+
+# docker build -t cbagade/kub-data-demo:v1 .
+# docker push cbagade/kub-data-demo:v1
+# kubectl apply -f deployment.yaml -f service.yaml
+# GET http://localhost:30004/story on postman
+# POST http://localhost:30004/story -> body {"text":"ghost story"}
+# GET http://localhost:30004/error
+# GET http://localhost:30004/story data survived
+# because pod restarts afer container crash , default policy to restart is Always
+# and due to volume data survived

@@ -1,0 +1,82 @@
+# The deployment object first should have its own name , then the container and pod containing that container
+# and then selecting this pod as a part of deployment
+
+# refer https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
+# will list all details of enclosing specs
+apiVersion: apps/v1
+# Deployment is k8 artifact or k8 object
+kind: Deployment
+metadata:
+  # name of deployment
+  name: second-app-deployment
+# deployment specs, how the deployment should be configured
+spec:
+  # how many pods, default is 1, even 0 can be given
+  replicas: 1
+  # pods specs, which deployment should have
+  template:
+    # pods should be labelled with
+    # there is no need for kind: Pod  here as deployment will always have pod
+    metadata:
+      # pod should be labelled with
+      labels:
+        app: second-app
+        tier: backend
+    # how this pod should look like
+    spec:
+      # how containers should be created inside pods
+      # for this deployment, how many replicas you create , all pods will have same container spec
+      containers:
+        # container name inside pod and image
+        - name: second-node
+          # you need to create this image and push to registry
+          image: cbagade/kub-first-app:v1
+          # when ever you changing v1 of this image , following tag will ensure that
+          # it pulls from repository
+          # IfNotPresent - pulls if image is not available on node
+          # Never will never pull
+          imagePullPolicy: Always
+          # k8 uses liveness probes to know when to restart a container.
+          # For example, liveness probes could catch a deadlock, where an application is running,
+          # but unable to make progress.
+          # Restarting a container in such a state can help to make the application more available despite bugs
+          livenessProbe:
+            # will try to make a get request at path / on port 8080 in a interval of 10 seconds
+            # after 5 seconds, while container become stable (up/running)
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10
+            initialDelaySeconds: 5
+  # what pods should be created as a part of deployment
+  # see template section, where pods are labelled
+  # those pods will be selected to form this deployment
+  selector:
+    # the labels will be matched based on labels of pods
+    matchLabels:
+      app: second-app
+      tier: backend
+# kubectl apply -f deployment_liveness.yaml
+# kubectl apply -f service.yaml
+# http://localhost:30001 on browser
+# kubectl get pods -w
+# http://localhost:30001/error on browser
+# kubectl get pods -w --- restarts on its own and count will be 1
+
+# imagepullPolicy
+# comment the imagePullPolicy
+# kubectl apply -f deployment_liveness.yaml -f service.yaml
+# http://localhost:30001 on browser
+# kubectl delete -f deployment_liveness.yaml -f service.yaml
+# change something in app.js
+# build image with same tag and push
+# docker build -t cbagade/kub-first-app:v1 .
+# docker push cbagade/kub-first-app:v1
+# kubectl apply -f deployment_liveness.yaml -f service.yaml
+# http://localhost:30001 on browser , but you won't see change
+# since the tag is v1 and no imagePullPolicy is set , the default would be IfNotPresent
+# had the tag been latest or not available , the default would be Always
+# kubectl delete -f deployment_liveness.yaml -f service.yaml
+# uncomment the imagePullPolicy
+# kubectl apply -f deployment_liveness.yaml -f service.yaml
+# you should be able to see change now

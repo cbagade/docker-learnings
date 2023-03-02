@@ -1,0 +1,23 @@
+version: "3"
+services:
+  stories:
+    build: .
+    volumes:
+      - stories:/app/story
+    ports:
+      - 80:3000
+volumes:
+  stories: 
+
+
+# docker-compose up -d --build
+# on postman
+# inside collection k8
+# http://localhost:80/story GET
+# http://localhost:80/story POST with body raw, JSON {"text":"ghost story"}
+# since we using volume
+# docker-compose down
+# docker-compose up -d --build
+# http://localhost:80/story GET
+# data persisted
+# docker-compose down
