@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: story-deployment
 spec: 
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: story
@@ -32,12 +32,32 @@ spec:
           # if container restarts, data survive , but if pods restart, the data is gone
           emptyDir: {}
 
+# ensure replica is 1 in above definition
 # docker build -t cbagade/kub-data-demo:v1 .
 # docker push cbagade/kub-data-demo:v1
 # kubectl apply -f deployment.yaml -f service.yaml
-# GET http://localhost:30004/story on postman
+# first GET will fetch error , as file doesn't exist in emptyDir
+# GET http://localhost:30004/story on postman 
+# first post is okay as file get created in emptyDir
 # POST http://localhost:30004/story -> body {"text":"ghost story"}
 # GET http://localhost:30004/error
 # GET http://localhost:30004/story data survived
-# because pod restarts afer container crash , default policy to restart is Always
+# because pod restarts after container crash , default policy to restart is Always
 # and due to volume data survived
+
+
+# Limitation with emptyDir
+# spin up 2 pods by changing replica to 2
+# kubectl apply -f deployment.yaml -f service.yaml
+# http://localhost:30004/story 
+# if no data , then do post
+# http://localhost:30004/story --> POST -- > {"text":"ghost story"}
+# try error 
+# http://localhost:30004/error and try  GET immediately
+# http://localhost:30004/story 
+# there will be error , because when one pod is restarting and request goes to another pod
+# and there is no file there.
+# since emptyDir is closely associated with pod , the other pod will still be empty and gives error
+
+# To Overcome
+# look for deployment_hostpath.yaml

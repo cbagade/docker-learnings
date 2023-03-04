@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec: 
+  replicas: 2
+  selector:
+    matchLabels:
+      app: story
+  template:
+    metadata:
+      labels:
+        app: story
+    spec:
+      containers:
+        - name: story
+          image: cbagade/kub-data-demo:v1
+          # after setting vol at pod, we need to mount that on container on specific path
+          # this application is already have story folder, which will be inside app folder (see Dockerfile)
+          # so that text file will be available onto pod now, over volume
+          volumeMounts:
+            - mountPath: /app/story
+              # name of volume set on pod, there might be multiple volumes, so need names
+              name: story-volume
+      # volumes are at container level on pods
+      volumes:
+        # following volumes can be used by containers then
+        # this should be defined first and then the volumeMounts should be added to containers
+        # 
+        - name: story-volume
+          # path on host (instead path)
+          hostPath:
+            # specify a directory to host volume , can  be anything
+            path: /data
+            # should be existing directory or create it
+            type: DirectoryOrCreate
+
+
+# kubectl apply -f deployment_hostpath.yaml -f service.yaml
+# try to see if GET works
+# GET http://localhost:30004/story on postman 
+# if not do POST
+# POST http://localhost:30004/story -> body {"text":"ghost story"}
+# now error
+# GET http://localhost:30004/error
+# and GET again 
+# GET http://localhost:30004/story on postman 
+# this time data will be there since hostPath is mounted on node
+# can't see on ubuntu machine
+# to see data on KinD node
+# docker ps -a
+# docker exec -it <container_id>  /bin/bash
+# ls /data
+# you can see file
+# multiple nodes , will again be issue since hostPath is node specific
