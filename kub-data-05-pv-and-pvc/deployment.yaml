@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec: 
+  replicas: 2
+  selector:
+    matchLabels:
+      app: story
+  template:
+    metadata:
+      labels:
+        app: story
+    spec:
+      containers:
+        - name: story
+          image: cbagade/kub-pv-demo:1
+          volumeMounts:
+            - mountPath: /app/story
+              name: story-volume
+      volumes:
+        - name: story-volume
+          # we are now putting claim on pods to request PV
+          persistentVolumeClaim:
+            claimName: host-pvc
+
+# docker build -t cbagade/kub-pv-demo:1 .
+# docker push cbagade/kub-pv-demo:1
+# kubectl apply -f host-pv.yaml
+# kubectl get pv
+# the status is 'Available'
+# kubectl apply -f host-pvc.yaml
+# kubectl get pvc
+# the status is 'Pending'
+# kubectl apply -f deployment.yaml
+# kubectl get pods
+# once the pod is in running state
+# kubectl get pv
+# the status will be 'Bound', shows which pvc it is bound to
+# kubectl get pvc
+# the status will be 'Bound', shows which pv it is bound to
+# kubectl apply -f service.yaml

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: host-pv
+spec:
+  # host path persistent volume , but now detached from pod
+  # but it won't be independent of node
+  hostPath:
+    path: /data
+    type: DirectoryOrCreate
+  capacity: 
+    # matters, where we can decide how much size pods can use
+    # deployed in our cluster
+    storage: 1Gi
+  # either file or block, generally available storages
+  volumeMode: Filesystem
+  # ReadWriteOnce -> can be mounted as read write volume by multiple pods on single node, so pods should belong with single node
+  # ReadOnlyMany -> can be mounted as read volume by multiple pods on multiple node, so multiple pods  on multiple nodes  can claim these (not available for host path)
+  # ReadWriteMany -> can be mounted as read write volume by multiple pods on multiple node, so multiple pods  on multiple nodes  can claim these (not available for host path)
+  accessModes:
+    - ReadWriteOnce
+  # how the storage should be provisioned
+  # kubectl get sc
+  # kinD already configured this for us
+  storageClassName: standard
+

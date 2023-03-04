@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-store-env
+# the data to be passed as evn variables
+data:
+  # key: value
+  # can have lot manys
+  folder: 'story'
