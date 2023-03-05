@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+spec:
+  selector:
+    app: users
+  # ClusterIP is default , service is internal, reachable inside cluster only
+  # NodePort is specific to Node and in case of multiple pods and multiple replicas, its not good choice to use
+  # but in our case, since kinD is tough to configure with LoadBalancer, we will use this
+  # In real scenario, you should use LoadBalancer
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30004

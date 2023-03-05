@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: cbagade/kub-demo-users
+
+
+# cd /home/chandra/docker-learnings/kub-network-02-dummy-user-service/users-api
+# docker build -t cbagade/kub-demo-users .
+# docker push cbagade/kub-demo-users
+# cd /home/chandra/docker-learnings/kub-network-02-dummy-user-service/kubernetes
+# kubectl apply -f users-deployment.yaml -f users-service.yaml
+# POST
+# http://localhost:30004/login -> {     "email":"cbagade@yahoo.com",     "password":"devops" }
+# http://localhost:30004/signup -> {     "email":"cbagade@yahoo.com",     "password":"devops" }

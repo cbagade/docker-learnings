@@ -4,6 +4,7 @@
 
 ```
 sudo service docker start
+sudo service docker status
 ```
 
 * Docker is a container technology, tool for creating and managing containers
@@ -616,4 +617,107 @@ file is \\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-action-02
 
 ```
 \\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-03-first-volume\deployment.yaml
+```
+
+### hostPath
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-03-first-volume\deployment_hostpath.yaml
+```
+
+This sol won't work on multiple worker node
+
+### Persistent volumes
+
+* Pod and Node independent volumes are needed
+* Need Persistent volume, which are pod and node independent
+* User have full power how this volume is configured 
+
+* Persistent volumes are new entities in clusters which are detached from nodes and pods
+* Instead there is something PV Claims , inside nodes, which reached out to PVs. 
+* PV don't store data on node
+
+![](pv.png)
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-05-pv-and-pvc\host-pv.yaml
+
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-05-pv-and-pvc\host-pvc.yaml
+
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-05-pv-and-pvc\deployment.yaml
+```
+
+### Config Maps
+
+
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-06-env\app.js (process.env.STORY_FOLDER)
+
+
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-06-env\environment.yaml
+
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-data-06-env\deployment.yaml
+
+
+```
+
+
+## Networking
+
+![](demo_app.png)
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-02-dummy-user-service
+
+
+Inside file
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-02-dummy-user-service\users-api\users-app.js
+
+```
+
+```
+Inside app.post('/signup', async (req, res)
+comment line
+const hashedPW = await axios.get('http://auth/hashed-password/' + password);
+
+Instead put
+const hashedPW = 'dummy text';
+```
+
+
+```
+Inside
+app.post('/login', async (req, res) 
+comment response which calls auth service
+Harcode response
+const response = { status: 200, data: { token: 'abc' } };
+```
+
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-02-dummy-user-service\kubernetes\users-deployment.yaml
+```
+
+
+
+### Pod Internal communication
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-03-pod-internal\kubernetes\users-deployment.yaml
+
+In 
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-03-pod-internal\users-api\users-app.js
+
+auth service is called as ${process.env.AUTH_ADDRESS}
+and localhost is passed from users-deployment.yaml
+```
+
+### Pod 2 Pod communication
+
+
+```
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-04-automatic-domain-names
+
+\\wsl.localhost\Ubuntu-20.04\home\chandra\docker-learnings\kub-network-04-automatic-domain-names\kubernetes\users-deployment.yaml
 ```

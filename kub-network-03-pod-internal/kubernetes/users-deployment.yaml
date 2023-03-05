@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: cbagade/kub-demo-users:latest
+          env:
+            - name: AUTH_ADDRESS
+              value: localhost
+        - name: auth
+          image: cbagade/kub-demo-auth:latest
+
+# both containers run in same pod
+# so localhost should call the other container
+# cd /home/chandra/docker-learnings/kub-network-03-pod-internal/users-api
+# docker build -t cbagade/kub-demo-users:latest .
+# docker push cbagade/kub-demo-users:latest
+# cd /home/chandra/docker-learnings/kub-network-03-pod-internal/auth-api
+# docker build -t cbagade/kub-demo-auth:latest .
+# docker push cbagade/kub-demo-auth:latest
+# cd ../kubernetes
+# kubectl apply -f users-deployment.yaml -f users-service.yaml
+# http://localhost:30004/signup -> {     "email":"cbagade@yahoo.com",     "password":"devops" }
+# http://localhost:30004/login -> {     "email":"cbagade@yahoo.com",     "password":"devops" }
